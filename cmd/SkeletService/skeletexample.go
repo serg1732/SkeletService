@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/serg1732/SkeletService/pkg/skeletservice"
-
 	"github.com/serg1732/SkeletService/pkg/loggers"
+	"github.com/serg1732/SkeletService/pkg/skeletservice"
 
 	"github.com/gin-gonic/gin"
 )
