@@ -3,8 +3,9 @@ package consulwrapper
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
-	"github.com/serg1732/SkeletService/pkg/constants"
+	"github.com/serg1732/SkeletService/pkg/config"
 
 	"github.com/hashicorp/consul/api"
 )
@@ -21,7 +22,7 @@ func NewConsulClient() *ConsulClient {
 	return &ConsulClient{client: client}
 }
 
-func (cc *ConsulClient) RegisterService() error {
+func (cc *ConsulClient) RegisterService(option config.ServiceOption) error {
 	var err error
 	if cc.client == nil {
 		cc.client, err = api.NewClient(api.DefaultConfig())
@@ -31,15 +32,15 @@ func (cc *ConsulClient) RegisterService() error {
 	}
 
 	err = cc.client.Agent().ServiceRegister(&api.AgentServiceRegistration{
-		Name:    constants.ServiceName + "_tasks",
-		Address: constants.ServiceIP,
-		Port:    constants.ServicePort,
-		ID:      constants.ServiceID,
-		Tags:    []string{constants.ServiceTags},
+		Name:    option.ServiceName + "_tasks",
+		Address: option.ServiceIP,
+		Port:    option.ServicePort,
+		ID:      option.ServiceID,
+		Tags:    strings.Split(option.ServiceTags, "|"),
 		Check: &api.AgentServiceCheck{
-			HTTP:     "http://" + constants.ServiceAgentIP + ":" + strconv.Itoa(constants.ServicePort) + "/healthz",
-			Interval: constants.ServiceIntervalCheck,
-			Timeout:  constants.ServiceTimeoutCheck,
+			HTTP:     "http://" + option.ServiceAgentIP + ":" + strconv.Itoa(option.ServicePort) + "/healthz",
+			Interval: option.ServiceIntervalCheck,
+			Timeout:  option.ServiceTimeoutCheck,
 		},
 		Connect: &api.AgentServiceConnect{
 			Native: true,
@@ -49,8 +50,8 @@ func (cc *ConsulClient) RegisterService() error {
 	return err
 }
 
-func (cc *ConsulClient) DeRegisterService() error {
-	return cc.client.Agent().ServiceDeregister(constants.ServiceID)
+func (cc *ConsulClient) DeRegisterService(serviceID string) error {
+	return cc.client.Agent().ServiceDeregister(serviceID)
 }
 
 func (cc *ConsulClient) FindServices(serviceName string) []string {

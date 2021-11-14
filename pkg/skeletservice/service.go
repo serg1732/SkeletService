@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"sync"
 
+	"github.com/serg1732/SkeletService/pkg/config"
 	"github.com/serg1732/SkeletService/pkg/constants"
 	"github.com/serg1732/SkeletService/pkg/consulwrapper"
 	"github.com/serg1732/SkeletService/pkg/loggers"
@@ -20,6 +21,7 @@ type Service struct {
 	exitDone     *sync.WaitGroup
 	httpServer   *http.Server
 	logger       *loggers.ILogger
+	option       *config.ServiceOption
 }
 
 func NewService(handlerEngine *gin.Engine, log loggers.ILogger) *Service {
@@ -27,6 +29,7 @@ func NewService(handlerEngine *gin.Engine, log loggers.ILogger) *Service {
 		consulClient: consulwrapper.NewConsulClient(),
 		exitDone:     &sync.WaitGroup{},
 		logger:       &log,
+		option:       config.NewDefaultOption(),
 	}
 }
 
@@ -37,10 +40,10 @@ func (s *Service) Start() error {
 		textError := "Error! Not initialize handler Service!"
 		return errors.New(textError)
 	}
-	s.consulClient.RegisterService()
+	s.consulClient.RegisterService(*s.option)
 
 	s.httpServer = &http.Server{
-		Addr:    ":" + strconv.Itoa(constants.ServicePort),
+		Addr:    ":" + strconv.Itoa(s.option.ServicePort),
 		Handler: s.router,
 	}
 
@@ -53,7 +56,7 @@ func (s *Service) Start() error {
 		}
 	}()
 
-	defer s.consulClient.DeRegisterService()
+	defer s.consulClient.DeRegisterService(s.option.ServiceID)
 	s.exitDone.Add(1)
 	s.exitDone.Wait()
 	return err
