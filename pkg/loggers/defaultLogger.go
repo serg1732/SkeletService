@@ -25,17 +25,17 @@ func printLog(msg string) {
 }
 
 func (c *ConsoleLog) Error(msg string, uuid string) {
-	printLog(fmt.Sprintf(c.formatLog, "Error", uuid))
+	printLog(fmt.Sprintf(c.formatLog, "Error", msg, uuid))
 }
 func (c *ConsoleLog) Info(msg string, uuid string) {
-	printLog(fmt.Sprintf(c.formatLog, "Info", msg))
+	printLog(fmt.Sprintf(c.formatLog, "Info", msg, uuid))
 }
 func (c *ConsoleLog) Progress(msg string, uuid string) {
-	printLog(fmt.Sprintf(c.formatLog, "Progress", msg))
+	printLog(fmt.Sprintf(c.formatLog, "Progress", msg, uuid))
 }
 func (c *ConsoleLog) Debug(msg string, uuid string) {
-	printLog(fmt.Sprintf(c.formatLog, "Debug", msg))
+	printLog(fmt.Sprintf(c.formatLog, "Debug", msg, uuid))
 }
 func (c *ConsoleLog) System(msg string) {
-	printLog(fmt.Sprintf(c.formatLog, "System", msg))
+	printLog(fmt.Sprintf(c.formatLog, "System", msg, ""))
 }
