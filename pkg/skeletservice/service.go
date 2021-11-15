@@ -71,7 +71,7 @@ func (s *Service) Start() error {
 }
 
 func (s *Service) Unregister() {
-	s.consulClient.UnRegisterService(s.option.ServiceID)
+	s.consulClient.DeRegisterService(s.option.ServiceID)
 }
 func (s *Service) AddHandler(rtype constants.RequestType, path string, handler gin.HandlerFunc) error {
 	var err error
