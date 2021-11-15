@@ -4,6 +4,8 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
 	"strconv"
 	"sync"
 
@@ -56,10 +58,20 @@ func (s *Service) Start() error {
 		}
 	}()
 
-	defer s.consulClient.DeRegisterService(s.option.ServiceID)
+	ch := make(chan os.Signal, 1)
+	signal.Notify(ch, os.Interrupt)
+	go func() {
+		<-ch
+		s.exitDone.Done()
+	}()
+
 	s.exitDone.Add(1)
 	s.exitDone.Wait()
 	return err
+}
+
+func (s *Service) Unregister() {
+	s.consulClient.UnRegisterService(s.option.ServiceID)
 }
 func (s *Service) AddHandler(rtype constants.RequestType, path string, handler gin.HandlerFunc) error {
 	var err error

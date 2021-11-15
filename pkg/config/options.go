@@ -40,6 +40,6 @@ func NewDefaultOption() *ServiceOption {
 		&option.ServiceTags, "stags",
 		"Service", "Usage -stags=tag_one|tag_two|...|tag_last")
 	flag.Parse()
-	option.ServiceID = "service-instance-" + strconv.Itoa(option.ServicePort)
+	option.ServiceID = option.ServiceName + "-instance-" + strconv.Itoa(option.ServicePort)
 	return option
 }

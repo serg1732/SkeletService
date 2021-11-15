@@ -62,8 +62,8 @@ func (cc *ConsulClient) FindServices(serviceName string) []string {
 	}
 	var servicesList []string
 	servicesList = make([]string, len(servicesData))
-	for _, entry := range servicesData {
-		servicesList = append(servicesList, fmt.Sprintf("%s:%d", entry.Node.Address, entry.Service.Port))
+	for idx, entry := range servicesData {
+		servicesList[idx] = fmt.Sprintf("%s:%d", entry.Node.Address, entry.Service.Port)
 	}
 	return servicesList
 }
